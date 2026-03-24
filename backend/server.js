@@ -12,7 +12,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'https://taskmaster-assignment-smartinterv.vercel.app',
+  origin: process.env.CLIENT_URL || 'https://taskmaster-assignment-smartinterviews.vercel.app',
   credentials: true
 }));
 app.use(express.json());
