@@ -85,6 +85,20 @@ The application will be available at `http://localhost:3000`.
 
 ---
 
+## Deployment
+
+- **Frontend**: [Vercel](https://task-master-assignment-smart-interv.vercel.app/)
+- **Backend**: [Render](https://taskmaster-assignment-smartinterviews.onrender.com/)
+
+---
+
+## Live Links
+
+- **Application (Live)**: [https://task-master-assignment-smart-interv.vercel.app/](https://task-master-assignment-smart-interv.vercel.app/)
+- **API (Live)**: [https://taskmaster-assignment-smartinterviews.onrender.com/](https://taskmaster-assignment-smartinterviews.onrender.com/)
+
+---
+
 ## Design Decisions
 
 1. **Professional Aesthetic**: Removed all informal elements (emojis, flashy animations) to ensure a stable, production-ready feel suitable for enterprise use.
