@@ -11,10 +11,25 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  'https://task-master-assignment-smart-interv.vercel.app',
+  'https://task-master-assignment-smart-interviews-fb9cdu959.vercel.app',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'https://taskmaster-assignment-smartinterviews.vercel.app',
-  credentials: true
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
+  credentials: true,
 }));
+
 app.use(express.json());
 
 // Routes
