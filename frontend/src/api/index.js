@@ -1,51 +1,63 @@
-import axios from 'axios';
-
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://taskmaster-assignment-smartinterviews.onrender.com/api';
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' }
-});
+const getToken = () => localStorage.getItem('token');
 
-// Attach token to every request
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+const request = async (method, path, body = null, params = null) => {
+  let url = `${API_BASE_URL}${path}`;
 
-// Handle 401 globally
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
+  if (params) {
+    const query = Object.entries(params)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join('&');
+    if (query) url += `?${query}`;
   }
-);
+
+  const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const config = { method, headers };
+  if (body) config.body = JSON.stringify(body);
+
+  const res = await fetch(url, config);
+
+  // Handle 401 globally
+  if (res.status === 401) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+    return;
+  }
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    const error = new Error(data?.message || 'Something went wrong');
+    error.response = { data, status: res.status };
+    throw error;
+  }
+
+  return { data };
+};
 
 // Auth APIs
 export const authAPI = {
-  register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data),
-  getMe: () => api.get('/auth/me')
+  register: (body)     => request('POST', '/auth/register', body),
+  login:    (body)     => request('POST', '/auth/login', body),
+  getMe:    ()         => request('GET',  '/auth/me'),
 };
 
 // Task APIs
 export const taskAPI = {
-  getAll: (params) => api.get('/tasks', { params }),
-  getOne: (id) => api.get(`/tasks/${id}`),
-  create: (data) => api.post('/tasks', data),
-  update: (id, data) => api.put(`/tasks/${id}`, data),
-  delete: (id) => api.delete(`/tasks/${id}`)
+  getAll:   (params)   => request('GET',    '/tasks',       null, params),
+  getOne:   (id)       => request('GET',    `/tasks/${id}`),
+  create:   (body)     => request('POST',   '/tasks',       body),
+  update:   (id, body) => request('PUT',    `/tasks/${id}`, body),
+  delete:   (id)       => request('DELETE', `/tasks/${id}`),
 };
 
 // Analytics APIs
 export const analyticsAPI = {
-  get: () => api.get('/analytics')
+  get: () => request('GET', '/analytics'),
 };
-
-export default api;
