@@ -1,31 +1,32 @@
-# TaskMaster — Full Stack Task Management System
+# TaskMaster
 
-A production-ready Task Management application built with React, Node.js, and MongoDB. Designed with a focus on professional aesthetics, clarity, and robust technical implementation.
+A full-stack task management application with JWT authentication, real-time analytics, and a clean responsive UI.
+
+**Live App:** [https://task-master-assignment-smart-interv.vercel.app/login](https://task-master-assignment-smart-interv.vercel.app)
 
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                        |
-|------------|-----------------------------------|
-| Frontend   | React 18, React Router v6, Recharts |
-| Backend    | Node.js, Express.js               |
-| Database   | MongoDB + Mongoose                |
-| Auth       | JWT (JSON Web Tokens) + bcryptjs  |
-| Styling    | Custom CSS                        |
+| Layer     | Technology                          |
+|-----------|-------------------------------------|
+| Frontend  | React 18, React Router v6, Recharts |
+| Backend   | Node.js, Express.js                 |
+| Database  | MongoDB + Mongoose                  |
+| Auth      | JWT + bcryptjs                      |
+| Hosting   | Vercel (Frontend), Render (Backend) |
 
 ---
 
 ## Features
 
-- **Authentication**: JWT-based secure signup and login with bcrypt password hashing.
-- **Task Management**: Full CRUD operations for personal tasks.
-- **Detailed Task Fields**: Title, Description, Status (To Do, In Progress, Done), Priority (Low, Medium, High), and Due Date.
-- **Filtering & Search**: Dynamic filtering by status/priority and real-time search by title.
-- **Analytics Dashboard**: Visual insights including total tasks, completion percentage, and breakdown charts (Recharts).
-- **Productivity Tools**: Pagination, sorting (date/priority), and overdue task detection.
-- **User Interface**: Clean, professional light/dark modes with a fully responsive layout.
-- **Reliability**: Global error handling middleware and structured API validation.
+- JWT-based authentication (register, login, protected routes)
+- Full CRUD for tasks — title, description, status, priority, due date
+- Filter by status/priority, search by title, sort and paginate
+- Analytics dashboard with completion percentage, pie and bar charts
+- Overdue task detection
+- Light/Dark mode toggle
+- Fully responsive layout
 
 ---
 
@@ -34,17 +35,17 @@ A production-ready Task Management application built with React, Node.js, and Mo
 ```
 taskmaster/
 ├── backend/
-│   ├── controllers/      # Route logic (Auth, Tasks, Analytics)
-│   ├── middleware/       # JWT protection & global error handler
-│   ├── models/           # Mongoose schemas (User, Task)
-│   ├── routes/           # Express route definitions
-│   └── server.js         # Entry point & DB connection
+│   ├── controllers/        # Auth, Tasks, Analytics logic
+│   ├── middleware/         # JWT protection, error handler
+│   ├── models/             # Mongoose schemas (User, Task)
+│   ├── routes/             # Express route definitions
+│   └── server.js           # Entry point
 └── frontend/
-    ├── src/
-    │   ├── api/          # Axios service layer & interceptors
-    │   ├── components/   # Reusable UI elements (Layout, Modals)
-    │   ├── context/      # Global Authentication State
-    │   └── pages/        # Main application views
+    └── src/
+        ├── api/            # Fetch-based service layer
+        ├── components/     # Layout, TaskModal
+        ├── context/        # Auth context (global state)
+        └── pages/          # Login, Register, Dashboard, Tasks
 ```
 
 ---
@@ -52,57 +53,111 @@ taskmaster/
 ## Setup Instructions
 
 ### Prerequisites
-- Node.js (v18+)
-- MongoDB (Local or Atlas)
 
-### 1. Backend Setup
-1. Navigate to the `backend` directory.
-2. Install dependencies: `npm install`
-3. Create a `.env` file based on `.env.example`.
-4. Run the server: `npm run dev`
+- Node.js v18+
+- MongoDB (local or Atlas)
 
-### 2. Frontend Setup
-1. Navigate to the `frontend` directory.
-2. Install dependencies: `npm install`
-3. Run the application: `npm start`
+### 1. Backend
 
-The application will be available at `http://localhost:3000`.
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file:
+
+```
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE=7d
+CLIENT_URL=http://localhost:3000
+```
+
+Start the server:
+
+```bash
+npm run dev
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+```
+
+Create a `.env` file:
+
+```
+REACT_APP_API_URL=http://localhost:5000/api
+```
+
+Start the app:
+
+```bash
+npm start
+```
+
+App runs at `http://localhost:3000`
 
 ---
 
 ## API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` — Register a new account.
-- `POST /api/auth/login` — Sign in and receive a JWT.
-- `GET /api/auth/me` — Retrieve current user profile.
 
-### Task Management
-- `GET /api/tasks` — List all tasks (supports search, filter, sort, and pagination).
-- `POST /api/tasks` — Create a new task.
-- `PUT /api/tasks/:id` — Update an existing task.
-- `DELETE /api/tasks/:id` — Permenantly remove a task.
+| Method | Endpoint             | Description              | Access  |
+|--------|----------------------|--------------------------|---------|
+| POST   | /api/auth/register   | Register a new account   | Public  |
+| POST   | /api/auth/login      | Login and receive JWT    | Public  |
+| GET    | /api/auth/me         | Get current user profile | Private |
 
----
+### Tasks
 
-## Deployment
+| Method | Endpoint         | Description                                    | Access  |
+|--------|------------------|------------------------------------------------|---------|
+| GET    | /api/tasks       | Get all tasks (filter, search, sort, paginate) | Private |
+| POST   | /api/tasks       | Create a new task                              | Private |
+| GET    | /api/tasks/:id   | Get a single task                              | Private |
+| PUT    | /api/tasks/:id   | Update a task                                  | Private |
+| DELETE | /api/tasks/:id   | Delete a task                                  | Private |
 
-- **Frontend**: [Vercel](https://task-master-assignment-smart-interv.vercel.app/)
-- **Backend**: [Render](https://taskmaster-assignment-smartinterviews.onrender.com/)
+### Analytics
 
----
-
-## Live Links
-
-- **Application (Live)**: [https://task-master-assignment-smart-interv.vercel.app/](https://task-master-assignment-smart-interv.vercel.app/)
-- **API (Live)**: [https://taskmaster-assignment-smartinterviews.onrender.com/](https://taskmaster-assignment-smartinterviews.onrender.com/)
+| Method | Endpoint       | Description                        | Access  |
+|--------|----------------|------------------------------------|---------|
+| GET    | /api/analytics | Get task stats for logged-in user  | Private |
 
 ---
 
 ## Design Decisions
 
-1. **Professional Aesthetic**: Removed all informal elements (emojis, flashy animations) to ensure a stable, production-ready feel suitable for enterprise use.
-2. **MongoDB Aggregation**: Used `$group` and `$match` pipelines for the Analytics dashboard to ensure high performance even with large datasets.
-3. **Database Indexing**: Implemented compound indexes on the Task model (`user_id + status`, `user_id + priority`) to optimize query performance.
-4. **Inter-Service Communication**: Implemented Axios interceptors to automatically attach JWT headers and handle 401 Unauthorized responses globally.
-5. **Neutral Palette**: Utilized a modern, neutral design system (Inter font, slate/gray accents) to prioritize readability and user focus.
+1. **MongoDB Aggregation** — Used `$group` and `$match` pipelines for analytics to keep it performant at scale.
+2. **Compound Indexing** — Indexes on `user + status` and `user + priority` for fast filtered queries.
+3. **Native Fetch** — Custom fetch wrapper instead of third-party HTTP libraries, keeping the bundle lean.
+4. **Global Auth State** — React Context manages user session with localStorage persistence.
+5. **Global Error Handling** — Express middleware catches all errors centrally, with specific handling for Mongoose validation, duplicate keys, and invalid ObjectIds.
+6. **Neutral Design** — Inter font, slate/gray palette — focused on readability over decoration.
+
+---
+
+## Deployment
+
+### Frontend (Vercel)
+
+Set environment variable in Vercel dashboard:
+
+```
+REACT_APP_API_URL = https://taskmaster-assignment-smartinterviews.onrender.com/api
+```
+
+### Backend (Render)
+
+Set environment variables in Render dashboard:
+
+```
+MONGODB_URI = your_atlas_connection_string
+JWT_SECRET  = your_secret
+CLIENT_URL  =https://task-master-assignment-smart-interv.vercel.app/login
+```
